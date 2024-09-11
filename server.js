@@ -2,7 +2,7 @@ import express from 'express';
 import mysql from 'mysql2';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import bodyParser from 'body-parser';
+import bodyParser from 'body-parser'; 
 
 const App = express();
 dotenv.config();
@@ -31,7 +31,6 @@ db.connect((err) => {
 });
 
 //password hashing
-
 const hashPassword = async (password) => {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
