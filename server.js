@@ -3,6 +3,7 @@ import mysql from 'mysql2';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser'; 
+import bcrypt from 'bcrypt';
 
 const App = express();
 dotenv.config();
