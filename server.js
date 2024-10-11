@@ -124,7 +124,7 @@ App.post('api/signin', (req, res) => {
         if(!isPasswordValid){
             return res.status(401).send(
                 {
-                    message: "Inavlid username or password"
+                    message: "Invalid username or password"
                 }
             )
         }
