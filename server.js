@@ -36,7 +36,7 @@ const hashPassword = async (password) => {
     const saltRounds = 10;
     return await bcrypt.hash(password, saltRounds);
 }
-
+//Signup route
 App.post('api/signup', async (req, res) => {
     const { email, username, password } = req.body;
 
@@ -55,7 +55,7 @@ App.post('api/signup', async (req, res) => {
         const hashedPassword = await hashPassword(password);
 
         //SQL query to insert into DB
-        const query = 'INSERT INTO users (email, username, password) VALUES(?, ?)';
+        const query = 'INSERT INTO users (email, username, password) VALUES(?, ?, ?)';
 
         db.query(query, [username, hashedPassword], (err, results) => {
             if(err){
@@ -87,7 +87,7 @@ App.post('api/signup', async (req, res) => {
 App.post('api/signin', (req, res) => {
     const { username, password } = req.body;
     
-    if(!username || password){
+    if(!username || !password){
         return res.status(400).send(
             {
                 message: 'Username and password are required!'
@@ -135,12 +135,6 @@ App.post('api/signin', (req, res) => {
             }
         )
     })
-
-    res.send(
-        {
-            message: 'User signed in successfully'
-        }
-    )
 })
 
 App.listen(port, () => {
