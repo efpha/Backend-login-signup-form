@@ -8,7 +8,7 @@ import bcrypt from 'bcrypt';
 const App = express();
 dotenv.config();
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT;
 App.use(cors());
 App.use(bodyParser.json())
 
@@ -17,7 +17,7 @@ const db = mysql.createConnection(
     {
         host : process.env.DB_HOST,
         user : process.env.DB_USER,
-        password : process.env.DB_PASSWORD,
+        Password : process.env.DB_PASSWORD,
         database : process.env.DB_NAME
     }
 )
@@ -31,66 +31,45 @@ db.connect((err) => {
     }
 });
 
-//password hashing
-const hashPassword = async (password) => {
+//Password hashing
+const hashPassword = async (Password) => {
     const saltRounds = 10;
-    return await bcrypt.hash(password, saltRounds);
+    return await bcrypt.hash(Password, saltRounds);
 }
 //Signup route
-App.post('api/signup', async (req, res) => {
-    const { email, username, password } = req.body;
+App.post('/api/signup', async (req, res) => {
+    const { Email, username, Password } = req.body;
 
-    if(!email || !username || !password){
-        console.log("User signed up successfully");
-        
-        return res.status(400).send(
-            {
-                message: 'User signed up successfully'
-            }
-        )
+    if (!Email || !username || !Password) {
+        return res.status(400).send({ message: 'Email, username, and Password are required!' });
     }
 
-    try{
-        //hash password b4 storing it
-        const hashedPassword = await hashPassword(password);
+    try {
+        const hashedPassword = await hashPassword(Password);
 
-        //SQL query to insert into DB
-        const query = 'INSERT INTO users (email, username, password) VALUES(?, ?, ?)';
+        const query = 'INSERT INTO users (Email, username, Password) VALUES (?, ?, ?)';
 
-        db.query(query, [username, hashedPassword], (err, results) => {
-            if(err){
-                console.log('Encountered an error while inserting user into the database\nError:', err);
-                return res.status(500).send(
-                    {
-                        message: 'Server error'
-                    }
-                )    
+        db.query(query, [mail, username, hashedPassword], (err, results) => {
+            if (err) {
+                console.log('Error inserting user:', err);
+                return res.status(500).send({ message: 'Server error' });
             }
-            res.send(
-                {
-                    message: 'User signed up successfully'
-                }
-            );
-        })
-    } catch(error){
+            res.send({ message: 'User signed up successfully' });
+        });
+    } catch (error) {
         console.error('Error during signup:', error);
-        res.status(500).send(
-            {
-                message: 'Server error'
-            }
-        );
-
+        res.status(500).send({ message: 'Server error' });
     }
-})
+});
 
 //sigin route
-App.post('api/signin', (req, res) => {
-    const { username, password } = req.body;
+App.post('/api/signin', (req, res) => {
+    const { username, Password } = req.body;
     
-    if(!username || !password){
+    if(!username || !Password){
         return res.status(400).send(
             {
-                message: 'Username and password are required!'
+                message: 'Username and Password are required!'
             }
         )
     }
@@ -111,20 +90,20 @@ App.post('api/signin', (req, res) => {
         if(results.length === 0){
             return res.status(401).send(
                 {
-                    message: "Invalid username or password"
+                    message: "Invalid username or Password"
                 }
             )
         }
 
         const user =results[0];
 
-        //compare provided password with the stored hashed password
-        const isPasswordValid = await bcrypt.compare(password, user.password)
+        //compare provided Password with the stored hashed Password
+        const isPasswordValid = await bcrypt.compare(Password, user.Password)
 
         if(!isPasswordValid){
             return res.status(401).send(
                 {
-                    message: "Invalid username or password"
+                    message: "Invalid username or Password"
                 }
             )
         }
