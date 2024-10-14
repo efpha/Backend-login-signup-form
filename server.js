@@ -38,17 +38,19 @@ const hashPassword = async (Password) => {
 
 // Signup route
 App.post('/api/signup', async (req, res) => {
-    const { Email, username, Password } = req.body;
+    const { email, username, password } = req.body; // Changed to lowercase
+    
+    console.log(req.body);
 
-    if (!Email || !username || !Password) {
-        return res.status(400).send({ message: 'Email, username, and Password are required!' });
+    if (!email || !username || !password) {
+        return res.status(400).send({ message: 'Email, username, and password are required!' });
     }
 
     try {
-        const hashedPassword = await hashPassword(Password);
+        const hashedPassword = await hashPassword(password); // Pass the correct variable name
         const query = 'INSERT INTO sign_up (Email, username, Password) VALUES (?, ?, ?)';
 
-        db.query(query, [Email, username, hashedPassword], (err, results) => {
+        db.query(query, [email, username, hashedPassword], (err, results) => {
             if (err) {
                 console.log('Error inserting user:', err);
                 return res.status(500).send({ message: 'Server error' });
@@ -60,6 +62,7 @@ App.post('/api/signup', async (req, res) => {
         res.status(500).send({ message: 'Server error' });
     }
 });
+
 
 // Signin route
 App.post('/api/signin', (req, res) => {
