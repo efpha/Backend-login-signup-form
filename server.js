@@ -38,7 +38,7 @@ const hashPassword = async (Password) => {
 
 // Signup route
 App.post('/api/signup', async (req, res) => {
-    const { email, username, password } = req.body; // Changed to lowercase
+    const { email, username, password } = req.body;
     
     console.log(req.body);
 
@@ -47,7 +47,7 @@ App.post('/api/signup', async (req, res) => {
     }
 
     try {
-        const hashedPassword = await hashPassword(password); // Pass the correct variable name
+        const hashedPassword = await hashPassword(password);
         const query = 'INSERT INTO sign_up (Email, username, Password) VALUES (?, ?, ?)';
 
         db.query(query, [email, username, hashedPassword], (err, results) => {
