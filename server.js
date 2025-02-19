@@ -12,56 +12,146 @@ const port = process.env.PORT || 3001;
 App.use(cors());
 App.use(bodyParser.json())
 
-// Create connection to MySQL
-const db = mysql.createConnection({
+// Create connection with MySQL
+const con = mysql.createConnection({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME
 });
 
-// Connect to MySQL Database
-db.connect((err) => {
-    if (err) {
-        console.log("Database connection failed:", err);
-        return;
-    } else {
-        console.log("Connected to MySQL");
-    }
-});
+// connection to the database
+con.connect((err) => {
+    if(err){
+        console.log("Connection failed", err);
+        return
+    } else{
+        console.log('Connection succesful');
+    };
+})
 
-// Password hashing function
-const hashPassword = async (Password) => {
+
+// hashing password
+const hashedPassword = async(psd) => {
     const saltRounds = 10;
-    return await bcrypt.hash(Password, saltRounds);
-};
+    return await bcrypt.hash(psd,saltRounds)
+}
+
+//The new signup route
+App.post('/api/signup',async(req, res) => {
+    const {email, username, password} = req.body;
+
+    if(email== "" || username == "" || password == ""){
+        res.send("Enter all the fields");
+        return;
+    }
+
+    //try block for signup route
+    try {
+        const hashed_pswrd = await hashedPassword(password);
+        const mysql_query = 'INSERT INTO users(email,username,hashed_pswrd) VALUES(?,?,?)';
+        con.query(mysql_query, [email, username, hashed_pswrd],(err, results) => {
+            if(err){
+                console.log("Error occured while inserting user to the databse", err);
+                return res.status(500).send({message:"Server error"});
+            }
+            res.send({
+                message:"User created succesfully",
+                status: "200 Ok"
+            }) // response that is sent to the frontend
+            console.log("User created succesfully");
+        });
+
+        
+        console.log(req.body);
+        
+    } catch (error) {
+        console.log("Error occured while signing up: ",error);
+        res.send(error);
+    }
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Connect to MySQL Database
+// db.connect((err) => {
+//     if (err) {
+//         console.log("Database connection failed:", err);
+//         return;
+//     } else {
+//         console.log("Connected to MySQL");
+//     }
+// });
+
+// // Password hashing function
+// const hashPassword = async (Password) => {
+//     const saltRounds = 10;
+//     return await bcrypt.hash(Password, saltRounds);
+// };
 
 // Signup route
-App.post('/api/signup', async (req, res) => {
-    const { email, username, password } = req.body;
+// App.post('/api/signup', async (req, res) => {
+//     const { email, username, password } = req.body;
     
-    console.log(req.body);
+//     console.log(req.body);
 
-    if (!email || !username || !password) {
-        return res.status(400).send({ message: 'Email, username, and password are required!' });
-    }
+//     if (email == ""|| username == "" || password == "") {
+//         return res.status(400).send({ message: 'Email, username, and password are required!' });
+//     }
 
-    try {
-        const hashedPassword = await hashPassword(password);
-        const query = 'INSERT INTO sign_up (Email, username, Password) VALUES (?, ?, ?)';
+    // try {
 
-        db.query(query, [email, username, hashedPassword], (err, results) => {
-            if (err) {
-                console.log('Error inserting user:', err);
-                return res.status(500).send({ message: 'Server error' });
-            }
-            res.send({ message: 'User signed up successfully' });
-        });
-    } catch (error) {
-        console.error('Error during signup:', error);
-        res.status(500).send({ message: 'Server error' });
-    }
-});
+
+
+
+
+        // const hashedPassword = await hashPassword(password);
+        // const query = 'INSERT INTO sign_up (Email, username, Password) VALUES (?, ?, ?)';
+
+        // db.query(query, [email, username, hashedPassword], (err, results) => {
+        //     if (err) {
+        //         console.log('Error inserting user:', err);
+        //         return res.status(500).send({ message: 'Server error' });
+        //     }
+        //     res.send({ message: 'User signed up successfully' });
+        // });
+    // } catch (error) {
+        // console.error('Error during signup:', error);
+        // res.status(500).send({ message: 'Server error' });
+    // }
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 // Signin route
