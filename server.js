@@ -74,10 +74,31 @@ App.post('/api/signup',async(req, res) => {
 //new signin route
 App.post('/api/signin', async(req,res) => {
     const { email, password } = req.body;
-    res.send(req.body)
-    console.log(req.body);
+    console.log("from backend",req.body);
+
+    //backend form validation
+    if(email == "" || password == ""){
+        return res.send({
+            message:"Enter all fields",
+        })
+    }
+
+
 })
 
+/*
+Get data from frontend 
+Search for email (primary key) from the frontend within the DB
+If email is found select all data from the
+
+
+
+
+
+
+
+
+*/
 
 
 
