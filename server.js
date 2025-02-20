@@ -74,12 +74,33 @@ App.post('/api/signup',async(req, res) => {
 //new signin route
 App.post('/api/signin', async(req,res) => {
     const { email, password } = req.body;
-    console.log("from backend",req.body);
 
     //backend form validation
     if(email == "" || password == ""){
         return res.send({
             message:"Enter all fields",
+        })
+    }
+
+    try {
+        const sql = "SELECT * FROM users WHERE email=?";
+        con.query(sql,[email], (err, results) => {
+            if(err){
+                return res.status(500).send({message:"Server error"});
+            }
+
+            // check whether user exists (0 - no user match)
+            if(results.length === 0){
+                res.send({
+                    message:"Invalid user"
+                })
+            }
+            
+        })
+    } catch (error) {
+        console.log("Error while signing in: ", error);
+        res.send({
+            message:"error occured while signing in"
         })
     }
 
