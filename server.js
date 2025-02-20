@@ -59,11 +59,7 @@ App.post('/api/signup',async(req, res) => {
                 status: "200 Ok"
             }) // response that is sent to the frontend
             console.log("User created succesfully");
-        });
-
-        
-        console.log(req.body);
-        
+        });        
     } catch (error) {
         console.log("Error occured while signing up: ",error);
         res.send(error);
@@ -96,9 +92,17 @@ App.post('/api/signin', async(req,res) => {
             const user = results[0];
 
             // Compare provided password with the stored hashed password
-            const isPasswordValid = await bcrypt.compare(password, user.password);
-            console.log(isPasswordValid);
+            const isPasswordValid = await bcrypt.compare(password, user.hashed_pswrd);
             
+            if(isPasswordValid){
+                res.status(200).send({
+                    message:"Login success"
+                })
+            } else{
+                res.send({
+                    message:"Invalid user or password"
+                })
+            }
         
     } catch (error) {
         console.log("Error while signing in: ", error);
