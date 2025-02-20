@@ -75,7 +75,7 @@ App.post('/api/signin', async(req,res) => {
     const { email, password } = req.body;
 
     //backend form validation
-    if(email == "" || password == ""){
+    if(email === "" || password === ""){
         return res.send({
             message:"Enter all fields",
         })
