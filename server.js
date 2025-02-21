@@ -128,6 +128,29 @@ If email is found select all data from the
 
 */
 
+App.post('/api/forgotpassword', (req, res) => {
+    const { email } = req.body;
+    res.send({
+        message:"Email received in the backend succesfully",
+        mail: email
+    })
+
+    console.log({email});
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
