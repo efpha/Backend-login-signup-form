@@ -128,6 +128,12 @@ If email is found select all data from the
 
 */
 
+// backend test route
+App.get("/api/test", (req, res) => {
+    res.send("200 Ok");
+    console.log("200 Ok");
+})
+
 App.post('/api/forgotpassword', (req, res) => {
     const { email } = req.body;
     res.send({
